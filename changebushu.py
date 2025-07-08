@@ -1,12 +1,14 @@
 import requests, time, re, json, os
 from random import randint
- 
+import time
+
 headers = {
     'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 9; MI 6 MIUI/20.6.18)'
 }
  
-user = ''
-password = ''
+user = '1792723437@qq.com'
+# user = '+8617717928699'
+password = 'qwertyu123$'
 # step = ''
 step = str(randint(10121, 12302))
  
@@ -16,7 +18,7 @@ def get_code(location):
     return code
 
 def login(user, password):
-    url1 = "https://api-user.huami.com/registrations/+86" + user + "/tokens"
+    url1 = "https://api-user.huami.com/registrations/" + user + "/tokens"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2"
@@ -28,7 +30,14 @@ def login(user, password):
         "token": "access"
     }
     r1 = requests.post(url1, data=data1, headers=headers, allow_redirects=False)
-    print(r1.text)
+    print("状态码:", r1.status_code)
+    print("响应头:", r1.headers)
+    print("响应内容:", r1.text)
+    print("响应内容(字节):", r1.content)
+    print("json内容(如果有):", r1.json() if 'application/json' in r1.headers.get('Content-Type', '') else "不是JSON")
+    print("请求头:", r1.request.headers)
+    print("请求体:", r1.request.body)
+    print("cookies:", r1.cookies)
     location = r1.headers["Location"]
     # print(location)
     try:
@@ -39,17 +48,40 @@ def login(user, password):
     print(code)
  
     url2 = "https://account.huami.com/v2/client/login"
+    # data2 = {
+    #     "app_name": "com.xiaomi.hm.health",
+    #     "app_version": "4.6.0",
+    #     "code": f"{code}",
+    #     "country_code": "CN",
+    #     "device_id": "2C8B4939-0CCD-4E94-8CBA-CB8EA6E613A1",
+    #     "device_model": "phone",
+    #     "grant_type": "access_token",
+    #     "third_name": "huami_phone",
+    # }
     data2 = {
         "app_name": "com.xiaomi.hm.health",
-        "app_version": "4.6.0",
+        "app_version": "6.14.0",
         "code": f"{code}",
         "country_code": "CN",
-        "device_id": "2C8B4939-0CCD-4E94-8CBA-CB8EA6E613A1",
+        "device_id": "2C8B4942-0CCD-4E94-8CBA-CB8EA6E723A1",
         "device_model": "phone",
-        "grant_type": "access_token",
-        "third_name": "huami_phone",
+        "dn":"api-user.huami.com%2Capi-mifit.huami.com%2Capp-analytics.huami.com",
+        "grant_type":"access_token",
+        "lang":"zh_CN",
+        "os_version":"1.5.0",
+        "source":"com.xiaomi.hm.health",
+        "third_name":"email",
     }
-    r2 = requests.post(url2, data=data2, headers=headers).json()
+    r2 = requests.post(url2, data=data2, headers=headers)
+    # print("状态码:", r2.status_code)
+    # print("响应头:", r2.headers)
+    # print("响应内容:", r2.text)
+    # print("响应内容(字节):", r2.content)
+    # print("json内容(如果有):", r2.json() if 'application/json' in r1.headers.get('Content-Type', '') else "不是JSON")
+    # print("请求头:", r2.request.headers)
+    # print("请求体:", r2.request.body)
+    # print("cookies:", r2.cookies)
+    r2=r2.json()
     login_token = r2["token_info"]["login_token"]
     print("login_token获取成功")
     print(login_token)
@@ -93,10 +125,25 @@ def main():
     print(result)
     return result
  
+# def get_time():
+#     url = 'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp'
+#     response = requests.get(url, headers=headers).json()
+#     t = response['data']['t']
+#     return t
 def get_time():
-    url = 'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp'
-    response = requests.get(url, headers=headers).json()
-    t = response['data']['t']
+    # url = 'https://cloud.tencent.com/api/timestamp'
+    # response = requests.get(url, timeout=5)
+    # print("ok:", response.ok)
+    # print("响应内容:", response.text)
+    # print("响应内容(字节):", response.content)
+    # print("json内容(如果有):", response.json() if 'application/json' in r1.headers.get('Content-Type', '') else "不是JSON")
+    # print("link:", response.request.link)
+    # t = str(int(response.json()['Timestamp']))
+    # 秒级时间戳
+    timestamp_seconds = int(time.time())
+
+    # 毫秒级时间戳
+    t=timestamp_milliseconds = int(time.time() * 1000)
     return t
  
 
